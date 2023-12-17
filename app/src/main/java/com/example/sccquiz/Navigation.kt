@@ -11,8 +11,8 @@ import androidx.navigation.navArgument
 @Composable
 fun Navigation(context : Context, viewModel : MainViewModel  ) {
     val navController = rememberNavController()
-    val navigateViewModel = QuestionsObjectViewModel()
-    NavHost(navController = navController , startDestination = "First"){
+    val navigateViewModel = QuestionsViewModel()
+    NavHost(navController = navController , startDestination = "LoginPage"){
         composable(route = "First"){
             First(navController = navController , context , viewModel)
         }

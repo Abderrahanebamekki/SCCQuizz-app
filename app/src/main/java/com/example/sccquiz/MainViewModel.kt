@@ -8,6 +8,8 @@ class MainViewModel (application: Application): ViewModel() {
     private val _repository: UserRepository
     val repository : UserRepository
         get() = _repository
+
+
     private val searchResults: MutableLiveData<String>
 
     init {
@@ -16,9 +18,12 @@ class MainViewModel (application: Application): ViewModel() {
         _repository = UserRepository(userDao)
         searchResults = _repository.searchResults
     }
+
+
     fun insertUser(user:User) {
         _repository.insertUser(user)
     }
+
     fun findUser(lastUser : Boolean) {
         _repository.findUser(lastUser)
     }

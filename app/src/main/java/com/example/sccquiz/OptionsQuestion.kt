@@ -70,21 +70,24 @@ fun Quiz() {
                 Option("sefds"),
                 Option("fdgagdf")
             ),
-            answer = "dsfde"
+            answer = "fdddd"
         )
-
         val questions1 = Question(
             question = "jdpfrfoepfoeo",
             listOption = listOf(
-                Option("fdddd"),
-                Option("sefds"),
-                Option("fdgagdf")
+                Option("uuhuuuk"),
+                Option("khkhukhukh"),
+                Option("fdgukhukhukhuagdf")
             ),
-            answer = "dsfde"
+            answer = "uuhuuuk"
         )
-
         var index = remember {
             mutableStateOf(0)
+        }
+
+        var ques = listOf(questions, questions1)
+        var que = remember {
+            mutableStateOf(ques[index.value])
         }
 
         var visible = remember {
@@ -94,13 +97,26 @@ fun Quiz() {
         var visible1 = remember {
             mutableStateOf(true)
         }
+        var validate = remember {
+            mutableStateOf(false)
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally ,
             modifier = Modifier.height(350.dp)
         ) {
             //val questions = navigateViewModel.selectedListQuestions // list of question navigate from home activity
- 
-            var ques = listOf(questions, questions1)
+            var correctAnswer = remember {
+                mutableStateOf(true)
+            }
+//            var showIcon =
+//                if(actualIndex.value == index.value){
+//                    remember {
+//                        mutableStateOf(false)
+//                    }}else{
+//                    remember {
+//                        mutableStateOf(true)
+//                    }
+//                }
             AnimatedVisibility(
                 visible = visible.value,
                 enter = scaleIn(
@@ -124,14 +140,11 @@ fun Quiz() {
             }
             LazyColumn {
                 items(
-                    questions.listOption!!
+                    que.value.listOption!!
                     //    questions.value!![index.value]!!.listOption!!
                 ) {
-                    var correctAnswer = remember {
-                        mutableStateOf(true)
-                    }
                     var icon =
-                       if (correctAnswer.value){
+                       if (correctAnswer.value ){
                            remember {
                                mutableStateOf(Icons.Rounded.Check)
                            }
@@ -140,25 +153,32 @@ fun Quiz() {
                                mutableStateOf(Icons.Rounded.Close)
                            }
                        }
+
                     var showIcon = remember {
-                        mutableStateOf(false)
-                    }
+                                mutableStateOf(false)
+                            }
+
+
                     var point = remember {
                         mutableStateOf(0)
                     }
+
                     val option = it
                     if (option != null)
                         chooseOption(
                             option = option,
                             visible1 = visible1.value ,
                             icon = icon.value ,
-                            showIcon = false
+                            showIcon = showIcon.value ,
+                            errorIcon = correctAnswer.value ,
+                            answer =que.value.answer.toString()
                         ){
                             showIcon.value = true
-                            val answer = questions.answer == option.text
-                            if (answer){
+                            correctAnswer.value = que.value.answer == option.text
+                            if (correctAnswer.value){
                                 point.value+=1
                             }
+                            validate.value = true
                         }
                 }
             }
@@ -178,13 +198,16 @@ fun Quiz() {
                 ),
                 modifier = Modifier.width(220.dp)
             ) {
+                index.value = 1
+               if (validate.value){
                 visible.value = !visible.value
                 visible1.value = !visible1.value
                 handler.postDelayed({
-                    index.value = 1
                     visible.value = !visible.value
                     visible1.value = !visible1.value
                 }, 1500)
+            }
+                validate.value =false
             }
         }
     }
@@ -197,8 +220,20 @@ fun chooseOption(
     visible1 : Boolean,
     icon : ImageVector,
     showIcon : Boolean,
+    errorIcon : Boolean,
+    answer : String,
     onClick : () ->Unit
     ) {
+    var showCheckIcon =
+       if (!errorIcon && option.text == answer){
+           remember {
+               mutableStateOf(true)
+           }
+       }else{
+           remember {
+               mutableStateOf(false)
+           }
+       }
     AnimatedVisibility(
         visible = visible1,
         enter = expandVertically(
@@ -235,7 +270,18 @@ fun chooseOption(
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
                             .size(38.dp),
-                        tint = if (icon == Icons.Rounded.Close) Color.Red else Color.Green
+                        tint = if (icon == Icons.Rounded.Close ) Color.Red else Color.Green
+                    )
+                }
+
+                AnimatedVisibility(visible = showCheckIcon.value) {
+                    Icon(
+                        imageVector = Icons.Rounded.Check,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp)
+                            .size(38.dp),
+                        tint =  Color.Green
                     )
                 }
 
@@ -251,3 +297,4 @@ fun chooseOption(
         }
     }
 }
+

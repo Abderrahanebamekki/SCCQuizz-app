@@ -66,7 +66,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun Home(
     userName : String = "username" ,
     navController: NavHostController ,
-    navigateViewModel: QuestionsObjectViewModel
+    navigateViewModel: QuestionsViewModel
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -124,7 +124,7 @@ fun Home(
 }
 
 @Composable
-fun saveData(viewModels: QuizViewModel , navController : NavHostController , navigateViewModel: QuestionsObjectViewModel) {
+fun saveData(viewModels: QuizViewModel , navController : NavHostController , navigateViewModel: QuestionsViewModel) {
     when(val result = viewModels.response.value){
         is DataState.Loading ->{
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
@@ -156,7 +156,7 @@ fun saveData(viewModels: QuizViewModel , navController : NavHostController , nav
 
 
 @Composable
-fun ShowLazyList(questions: MutableList<Quiz> , navController : NavHostController , navigateViewModel: QuestionsObjectViewModel) {
+fun ShowLazyList(questions: MutableList<Quiz> , navController : NavHostController , navigateViewModel: QuestionsViewModel) {
     LazyColumn(
         modifier = Modifier.padding(top = 50.dp)
     ) {

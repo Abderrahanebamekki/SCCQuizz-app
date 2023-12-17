@@ -206,8 +206,7 @@ fun loginPage(
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    var user = User(email = email.value.trim(), password = password.value.trim())
-                    user.login(context , navController , username = username.value)
+
                 }
                 // "forget password?"  for navigate to ...
                 Text(

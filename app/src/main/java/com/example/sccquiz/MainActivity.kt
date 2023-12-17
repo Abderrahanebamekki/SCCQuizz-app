@@ -20,6 +20,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -49,12 +50,13 @@ class MainActivity : ComponentActivity() {
                                         as Application
                             )
                         )
-                        optionsQuestion()
+                       loginPage(context = this, navController = NavController(this))
                     }
                 }
             }
         }
     }
+
 }
 /*val database = FirebaseDatabase.getInstance().reference
 database.child("1").child("name").get().addOnSuccessListener {

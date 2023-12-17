@@ -5,11 +5,13 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.functions.FirebaseFunctions
 import org.jetbrains.annotations.NotNull
 import kotlin.random.Random
 @Entity(tableName = "User")
@@ -17,8 +19,33 @@ class User(
      email : String? = null,
      password : String? = null,
      userName : String? = null ,
-    isLastUser : Boolean? = null
+    isLastUser : Boolean? = null ,
 ) {
+
+    private fun sendOptInEmail() {
+        // Get the current authenticated user
+        val user = FirebaseAuth.getInstance().currentUser
+
+// Check if the user is signed in and if their email is verified
+        if (user != null && !user.isEmailVerified) {
+            // Call the Cloud Function to send the verification email with OTP code
+            val functions = FirebaseFunctions.getInstance()
+            val data = hashMapOf(
+                "email" to this.email
+            )
+
+            functions
+                .getHttpsCallable("sendOtpEmail")
+                .call(data)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Email sent successfully. You can inform the user.
+                    } else {
+                        // Failed to send the email. Handle the error.
+                    }
+                }
+        }
+    }
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "UserId")
@@ -69,7 +96,8 @@ class User(
                 if (it.isSuccessful) {
                     val db = ConvertViewModel()
                     db.saveData(this , context)
-                    navController.navigate(route = "Home/${_userName}")
+                    this.sendOptInEmail()
+//                    navController.navigate(route = "Home/${_userName}")
                     //Toast.makeText(context, "it.exception?.message", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, it.exception?.message, Toast.LENGTH_SHORT).show()
